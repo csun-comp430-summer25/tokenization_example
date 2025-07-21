@@ -25,7 +25,7 @@ public class TokenizerTest {
 
     @Test
     public void testOnlyWhitespace() throws TokenizerException {
-        assertTokenizes(""); // todo: busted
+        assertTokenizes("  ");
     }
 
     @Test
@@ -71,5 +71,14 @@ public class TokenizerTest {
     @Test
     public void testFalseToken() throws TokenizerException {
         assertTokenizes("false", new FalseToken());
+    }
+
+    @Test
+    public void testInvalid() {
+        try {
+            assertTokenizes("$");
+            assertEquals(0, 1);
+        } catch (final TokenizerException e) {
+        }
     }
 }
