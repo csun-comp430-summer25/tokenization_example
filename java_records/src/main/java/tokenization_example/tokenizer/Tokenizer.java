@@ -74,11 +74,10 @@ public class Tokenizer {
         if (Character.isLetter(c) || c == '_') {
             String name = "" + c;
             position++;
-            c = input.charAt(position);
-            while (Character.isLetterOrDigit(c) || c == '_') {
+            while (position < input.length() &&
+                   (Character.isLetterOrDigit(c = input.charAt(position)) || c == '_')) {
                 name += c;
                 position++;
-                c = input.charAt(position);
             }
 
             // figure out if it was a reserved word, and give
