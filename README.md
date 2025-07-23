@@ -34,7 +34,7 @@ AST Nodes:
 ## Concrete Grammar ##
 
 ```
-primaryExp ::= INTEGER | `true` | `false` | `(` exp `)`
+primaryExp ::= `true` | `false` | INTEGER | `(` exp `)`
 multExp ::= primaryExp ((`*` | `/`) primaryExp)*
 addExp ::= multExp ((`+` | `-`) multExp)*
 exp ::= addExp
