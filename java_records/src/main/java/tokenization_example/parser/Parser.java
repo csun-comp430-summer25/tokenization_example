@@ -11,10 +11,52 @@ public class Parser {
         this.tokens = tokens;
     }
 
+    private Token getToken(final int pos) throws ParseException {
+        if (pos < 0 || pos > tokens.size()) {
+            throw new ParseException("Not in bounds: " + pos);
+        } else {
+            return tokens.get(pos);
+        }
+    }
+    
+    // exp ::= addExp
+    private ParseResult<Exp> parseExp(final int startPos) throws ParseException {
+        throw new ParseException("not (yet) implemented");
+    }
+
+    // multExp ::= primaryExp ((`*` | `/`) primaryExp)*
+    private ParseResult<Exp> parseMultExp(final int startPos) throws ParseException {
+        final ParseResult<Exp> initialExp = parsePrimaryExp(startPos);
+        Exp currentExp = initialExp.value;
+        int currentPosition = initialExp.nextPos;
+        boolean shouldRun = true;
+        while (shouldRun) {
+            try {
+                final Token operator = getToken(currentPosition);
+                if (operator instanceof MultToken) {
+                    final ParseResult<Exp> innerExp = parsePrimaryExp(currentPosition + 1);
+                    currentExp = new BinopExp(currentExp, new MultOp(), innerExp.value);
+                    currentPosition = innerExp.nextPos;
+                } else if (operator instanceof DivToken) {
+                    final ParseResult<Exp> innerExp = parsePrimaryExp(currentPosition + 1);
+                    currentExp = new BinopExp(currentExp, new DivOp(), innerExp.value);
+                    currentPosition = innerExp.nextPos;
+                } else {
+                    shouldRun = false;
+                }
+            } catch (final ParseException e) {
+                shouldRun = false;
+            }
+        }
+        return new ParseResult<Exp>(currentExp, currentPosition);
+    }
+                    
     // Recursive-descent parser
     // Each production rule in the concrete grammar becomes a method
+    //
+    // primaryExp ::= `true` | `false` | INTEGER | `(` exp `)`
     private ParseResult<Exp> parsePrimaryExp(final int startPos) throws ParseException {
-        final Token token = tokens.get(startPos);
+        final Token token = getToken(startPos);
         if (token instanceof TrueToken) {
             return new ParseResult<Exp>(new TrueLiteralExp(), startPos + 1);
         } else if (token instanceof FalseToken) {
@@ -23,8 +65,14 @@ public class Parser {
             return new ParseResult<Exp>(new IntegerLiteralExp(asInt.value), startPos + 1);
         } else if (token instanceof LeftParenToken) {
             // `(` exp `)`
-            // TODO: implement
-            
+            final ParseResult<Exp> nestedExp = parseExp(startPos + 1);
+            if (getToken(nestedExp.nextPos) instanceof RightParenToken) {
+                // if parens were a separate AST node
+                // return new ParseResult<Exp>(new ParenExp(nestedExp.value), nestedExp.nextPos + 1)
+                return new ParseResult<Exp>(nestedExp.value, nestedExp.nextPos + 1);
+            } else {
+                throw new ParseException("Not a right paren: " + getToken(nestedExp.nextPos));
+            }
         } else {
             throw new ParseException("Not a primaryExp: " + token);
         }
