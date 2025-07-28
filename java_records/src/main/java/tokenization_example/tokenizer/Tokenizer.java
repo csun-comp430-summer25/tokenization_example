@@ -29,6 +29,18 @@ public class Tokenizer {
         } else if (input.startsWith("-", position)) {
             position++;
             return Optional.of(new MinusToken());
+        } else if (input.startsWith("*", position)) {
+            position++;
+            return Optional.of(new MultToken());
+        } else if (input.startsWith("/", position)) {
+            position++;
+            return Optional.of(new DivToken());
+        } else if (input.startsWith("(", position)) {
+            position++;
+            return Optional.of(new LeftParenToken());
+        } else if (input.startsWith(")", position)) {
+            position++;
+            return Optional.of(new RightParenToken());
         } else if (input.startsWith("&&", position)) {
             position += 2;
             return Optional.of(new LogicalAndToken());
