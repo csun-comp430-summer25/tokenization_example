@@ -38,4 +38,5 @@ primaryExp ::= `true` | `false` | INTEGER | `(` exp `)`
 multExp ::= primaryExp ((`*` | `/`) primaryExp)*
 addExp ::= multExp ((`+` | `-`) multExp)*
 exp ::= addExp
+program ::= exp
 ``
